@@ -257,7 +257,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = APRS_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = APRS_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_APRS_1200,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_APRS,
                 .symbol_rate = 1200,
 #if APRS_WEATHER_REPORT_ENABLE
                 .payload_encoder = &radio_aprs_weather_report_payload_encoder,
