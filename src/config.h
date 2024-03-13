@@ -175,6 +175,7 @@
 // Si4063 transmit power: 0..127
 // TODO: Document Si4063 transmit power levels
 #define RADIO_SI4063_TX_POWER 127
+#define RADIO_SI4063_TX_POWER_APRS 127
 
 // Which modes to transmit using the built-in Si4063 transmitter chip
 // The COUNT settings define the number of times that each type of transmission is repeated
