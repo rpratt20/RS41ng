@@ -86,7 +86,8 @@ char *aprs_comment_templates[] = {
 //        " B$bu $loc12 $hh:$mm:$ss - " APRS_COMMENT,
 //        " $loc12 - " APRS_COMMENT,
 //        " $teC $hu% $prmb PC $pc RI $ri uR/h - " APRS_COMMENT,
-        " " APRS_COMMENT,
+//        "$loc8 - " APRS_COMMENT,
+        "$bv $teC $he $gs $alt" APRS_COMMENT,
         NULL
 };
 
