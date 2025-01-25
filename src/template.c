@@ -118,6 +118,15 @@ size_t template_replace(char *dest, size_t dest_len, char *src, telemetry_data *
     snprintf(replacement, sizeof(replacement), "%d", (int) data->clock_calibration_count);
     strlcpy(temp, dest, dest_len);
     str_replace(dest, dest_len, temp, "$cc", replacement);
+    
+    snprintf(replacement, sizeof(replacement), "%d", (int) data->rp_xtal_code);
+    strlcpy(temp, dest, dest_len);
+    str_replace(dest, dest_len, temp, "$tc", replacement);
+    
+    snprintf(replacement, sizeof(replacement), "%d", (int) data->rp_lu_code);
+    strlcpy(temp, dest, dest_len);
+    str_replace(dest, dest_len, temp, "$tl", replacement);
+   
 
     free(temp);
 

@@ -10,6 +10,7 @@
 #include "codecs/morse/morse.h"
 #include "codecs/bell/bell.h"
 #include "codecs/mfsk/mfsk.h"
+#include "codecs/raw/raw.h"
 #include "codecs/jtencode/jtencode.h"
 #include "drivers/ubxg6010/ubxg6010.h"
 #include "radio_internal.h"
@@ -25,6 +26,7 @@
 #include "radio_payload_aprs_weather.h"
 #include "radio_payload_horus_v1.h"
 #include "radio_payload_horus_v2.h"
+#include "radio_payload_cats.h"
 #include "radio_payload_wspr.h"
 #include "radio_payload_jtencode.h"
 #include "radio_payload_fsq.h"
@@ -175,7 +177,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = HORUS_V1_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = HORUS_V1_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_HORUS_V1,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
                 .symbol_rate = HORUS_V1_BAUD_RATE_SI4063,
                 .payload_encoder = &radio_horus_v1_payload_encoder,
                 .fsk_encoder_api = &mfsk_fsk_encoder_api,
@@ -187,7 +189,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = HORUS_V1_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = HORUS_V1_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_HORUS_V1,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
                 .symbol_rate = HORUS_V1_BAUD_RATE_SI4063,
                 .payload_encoder = &radio_horus_v1_idle_encoder,
                 .fsk_encoder_api = &mfsk_fsk_encoder_api,
@@ -200,7 +202,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = HORUS_V2_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = HORUS_V2_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_HORUS_V2,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
                 .symbol_rate = HORUS_V2_BAUD_RATE_SI4063,
                 .payload_encoder = &radio_horus_v2_payload_encoder,
                 .fsk_encoder_api = &mfsk_fsk_encoder_api,
@@ -212,7 +214,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = HORUS_V2_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = HORUS_V2_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_HORUS_V2,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
                 .symbol_rate = HORUS_V2_BAUD_RATE_SI4063,
                 .payload_encoder = &radio_horus_v2_idle_encoder,
                 .fsk_encoder_api = &mfsk_fsk_encoder_api,
@@ -242,7 +244,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = CW_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = CW_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_CW,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
                 .symbol_rate = MORSE_WPM_TO_SYMBOL_RATE(CW_SPEED_WPM),
                 .payload_encoder = &radio_cw_payload_encoder,
                 .fsk_encoder_api = &morse_fsk_encoder_api,
@@ -257,7 +259,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = APRS_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = APRS_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_APRS_1200,
-                .tx_power = RADIO_SI4063_TX_POWER_APRS,
+                .tx_power = RADIO_SI4063_TX_POWER,
                 .symbol_rate = 1200,
 #if APRS_WEATHER_REPORT_ENABLE
                 .payload_encoder = &radio_aprs_weather_report_payload_encoder,
@@ -276,7 +278,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = HORUS_V1_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = HORUS_V1_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_HORUS_V1,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
                 .symbol_rate = HORUS_V1_BAUD_RATE_SI4063,
                 .payload_encoder = &radio_horus_v1_payload_encoder,
                 .fsk_encoder_api = &mfsk_fsk_encoder_api,
@@ -291,10 +293,24 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = HORUS_V2_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = HORUS_V2_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_HORUS_V2,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
                 .symbol_rate = HORUS_V2_BAUD_RATE_SI4063,
                 .payload_encoder = &radio_horus_v2_payload_encoder,
                 .fsk_encoder_api = &mfsk_fsk_encoder_api,
+        },
+#endif
+#if RADIO_SI4063_TX_CATS
+        {
+                .enabled = RADIO_SI4063_TX_CATS,
+                .radio_type = RADIO_TYPE_SI4063,
+                .data_mode = RADIO_DATA_MODE_CATS,
+                .transmit_count = RADIO_SI4063_TX_CATS_COUNT,
+                .time_sync_seconds = CATS_TIME_SYNC_SECONDS,
+                .time_sync_seconds_offset = CATS_TIME_SYNC_OFFSET_SECONDS,
+                .frequency = RADIO_SI4063_TX_FREQUENCY_CATS,
+                .tx_power = RADIO_SI4063_TX_POWER,
+                .payload_encoder = &radio_cats_payload_encoder,
+                .fsk_encoder_api = &raw_fsk_encoder_api,
         },
 #endif
 #endif
@@ -489,6 +505,7 @@ radio_module_state radio_shared_state = {
         .radio_dma_transfer_active = false,
         .radio_manual_transmit_active = false,
         .radio_interrupt_transmit_active = false,
+        .radio_fifo_transmit_active = false,
 
         .radio_current_fsk_tones = NULL,
         .radio_current_fsk_tone_count = 0,
@@ -619,6 +636,12 @@ static bool radio_start_transmit(radio_transmit_entry *entry)
                     &entry->fsk_encoder);
             entry->fsk_encoder_api->set_data(&entry->fsk_encoder, radio_current_payload_length, radio_current_payload);
             break;
+        case RADIO_DATA_MODE_CATS:
+            enable_gps_during_transmit = true;
+
+            raw_encoder_new(&entry->fsk_encoder);
+            entry->fsk_encoder_api->set_data(&entry->fsk_encoder, radio_current_payload_length, radio_current_payload);
+            break;
         case RADIO_DATA_MODE_WSPR:
         case RADIO_DATA_MODE_FT8:
         case RADIO_DATA_MODE_JT65:
@@ -685,11 +708,11 @@ static bool radio_start_transmit(radio_transmit_entry *entry)
         return false;
     }
 
-    log_info("TX start\n");
-
     if (leds_enabled) {
         set_red_led(true);
     }
+
+    log_info("TX start\n");
 
     radio_shared_state.radio_transmission_active = true;
 
@@ -737,6 +760,7 @@ static bool radio_stop_transmit(radio_transmit_entry *entry)
 
     radio_shared_state.radio_manual_transmit_active = false;
     radio_shared_state.radio_interrupt_transmit_active = false;
+    radio_shared_state.radio_fifo_transmit_active = false;
     radio_shared_state.radio_dma_transfer_active = false;
 
     switch (entry->data_mode) {
@@ -752,6 +776,9 @@ static bool radio_stop_transmit(radio_transmit_entry *entry)
         case RADIO_DATA_MODE_HORUS_V1:
         case RADIO_DATA_MODE_HORUS_V2:
             mfsk_encoder_destroy(&entry->fsk_encoder);
+            break;
+        case RADIO_DATA_MODE_CATS:
+            raw_encoder_destroy(&entry->fsk_encoder);
             break;
         case RADIO_DATA_MODE_WSPR:
         case RADIO_DATA_MODE_FT8:
@@ -954,7 +981,7 @@ void radio_handle_main_loop()
         log_info("Lat: %ld *1M, Lon: %ld *1M, Alt: %ld m\n",
                 current_telemetry_data.gps.latitude_degrees_1000000 / 10,
                 current_telemetry_data.gps.longitude_degrees_1000000 / 10,
-                (current_telemetry_data.gps.altitude_mm / 1000) * 3280 / 1000);
+                (current_telemetry_data.gps.altitude_mm / 1000));
         #endif
 
         radio_reset_transmit_delay_counter();
@@ -988,7 +1015,9 @@ void radio_handle_main_loop()
         }
     }
 
-    if (radio_shared_state.radio_transmission_active && radio_shared_state.radio_transmit_next_symbol_flag) {
+    if (radio_shared_state.radio_transmission_active
+        && radio_shared_state.radio_transmit_next_symbol_flag
+        && !radio_shared_state.radio_fifo_transmit_active) {
         radio_shared_state.radio_transmit_next_symbol_flag = false;
 
         if (!radio_shared_state.radio_manual_transmit_active && !radio_shared_state.radio_interrupt_transmit_active) {
@@ -1046,6 +1075,9 @@ void radio_init()
             case RADIO_DATA_MODE_HORUS_V1:
             case RADIO_DATA_MODE_HORUS_V2:
                 // No messages
+                break;
+            case RADIO_DATA_MODE_CATS:
+                entry->messages = cats_comment_templates;
                 break;
             case RADIO_DATA_MODE_FT8:
             case RADIO_DATA_MODE_JT65:

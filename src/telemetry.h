@@ -24,10 +24,18 @@ typedef struct _telemetry_data {
 
     int	clock_calibration_trim;
     uint16_t clock_calibration_count;
+
+// RP added
+    uint8_t rp_xtal_code;
+    uint8_t rp_lu_code;
 } telemetry_data;
 
 void telemetry_collect(telemetry_data *data);
 
 extern int8_t gps_time_leap_seconds;
+
+
+
+
 
 #endif

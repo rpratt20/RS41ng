@@ -8,12 +8,18 @@
 #include "config.h"
 #include "log.h"
 
+
 #ifdef RS41
 #include "drivers/si4032/si4032.h"
 #endif
 #ifdef DFM17
 #include "hal/clock_calibration.h"
 #include "drivers/si4063/si4063.h"
+#include "cap_look.h"
+uint8_t clock_crystal_calibration_capacitance;
+uint8_t c_t_look;
+int t_look;
+
 #endif
 
 // Initialize leap seconds with a known good value
@@ -32,6 +38,7 @@ void telemetry_collect(telemetry_data *data)
 #endif
 #ifdef DFM17
     data->internal_temperature_celsius_100 = si4063_read_temperature_celsius_100();
+
 #endif
 
     if (bmp280_enabled) {
@@ -77,8 +84,25 @@ void telemetry_collect(telemetry_data *data)
     data->clock_calibration_count = clock_calibration_get_change_count();
 #endif
 
+//Added RP for temp correction
+
+#ifdef DFM17
+    if (RADIO_SI4063_TX_CORRECT == true) {
+       t_look = (int) ((data->internal_temperature_celsius_100/100 + 60)/2);
+       if (t_look < 0 || t_look > 49){
+          t_look = 39;
+       }
+       data->rp_lu_code = t_look;
+       data->rp_xtal_code = c_value[t_look];
+    
+       si4063_set_crystal_capacitance(data->rp_xtal_code);
+    }
+   
+#endif
+
     locator_from_lonlat(data->gps.longitude_degrees_1000000, data->gps.latitude_degrees_1000000,
             LOCATOR_PAIR_COUNT_FULL, data->locator);
+
 
     log_info("Telemetry collected!\n");
 }
