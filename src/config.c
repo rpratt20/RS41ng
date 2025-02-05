@@ -29,7 +29,9 @@
  * $ri - Radiation intensity in µR/h (up to 5 chars)
  * $ct - Clock calibration trim value (0-31, only for DFM-17)
  * $cc - Clock calibration change count (only for DFM-17)
- *
+ * $ct - Crystal_temperature_code for clock(only for DFM-17)
+ * $tc - Crystal_temperature_code for xtal (only for DFM-17)
+ * $tl - Crystal_lookup_code for xtal (only for DFM-17) not implemented yet
  * Allowed message lengths:
  *
  * APRS comment - Free text up to 127 chars
@@ -86,9 +88,14 @@ char *aprs_comment_templates[] = {
 //        " B$bu $loc12 $hh:$mm:$ss - " APRS_COMMENT,
 //        " $loc12 - " APRS_COMMENT,
 //        " $teC $hu% $prmb PC $pc RI $ri uR/h - " APRS_COMMENT,
-//        "$loc8 - " APRS_COMMENT,
-        "$bv $teC $he $gs $alt" APRS_COMMENT,
+//        " $tiC $tc $ct $cc " APRS_COMMENT,
+        " $tiC $tc $tl $cc $ct " APRS_COMMENT,
         NULL
+};
+
+char *cats_comment_templates[] = {
+    CATS_COMMENT,
+    NULL
 };
 
 /**
