@@ -313,6 +313,21 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .fsk_encoder_api = &raw_fsk_encoder_api,
         },
 #endif
+#if RADIO_SI4063_TX_HORUS_B2
+        {
+                .enabled = RADIO_SI4063_TX_HORUS_B2,
+                .radio_type = RADIO_TYPE_SI4063,
+                .data_mode = RADIO_DATA_MODE_HORUS_V2,
+                .transmit_count = RADIO_SI4063_TX_HORUS_B2_COUNT,
+                .time_sync_seconds = HORUS_V2_TIME_SYNC_SECONDS,
+                .time_sync_seconds_offset = HORUS_V2_TIME_SYNC_OFFSET_SECONDS,
+                .frequency = RADIO_SI4063_TX_FREQUENCY_HORUS_V2,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
+                .symbol_rate = HORUS_V2_BAUD_RATE_SI4063,
+                .payload_encoder = &radio_horus_v2_payload_encoder,
+                .fsk_encoder_api = &mfsk_fsk_encoder_api,
+        },
+#endif
 #endif
 #endif
 

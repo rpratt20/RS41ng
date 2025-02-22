@@ -89,8 +89,11 @@ void telemetry_collect(telemetry_data *data)
 #ifdef DFM17
     if (RADIO_SI4063_TX_CORRECT == true) {
        t_look = (int) ((data->internal_temperature_celsius_100/100 + 60)/2);
-       if (t_look < 0 || t_look > 49){
+       if (t_look < 0 ){
           t_look = 39;
+       }
+       if (t_look >49 ){
+          t_look = 49;
        }
        data->rp_lu_code = t_look;
        data->rp_xtal_code = c_value[t_look];

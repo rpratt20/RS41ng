@@ -29,7 +29,7 @@
  */
 
 // Set the tracker amateur radio call sign here
-#define CALLSIGN "NO-CALL"
+#define CALLSIGN "KJ0RE"
 
 // Disabling LEDs will save power
 // Red LED: Lit during initialization and transmit.
@@ -40,13 +40,15 @@
 #define LEDS_DISABLE_ALTITUDE_METERS 1500
 
 // Allow powering off the sonde by pressing the button for over a second (when the sonde is not transmitting)
-#define ALLOW_POWER_OFF true
+#define ALLOW_POWER_OFF false
 
 // Number of character pairs to include in locator
 #define LOCATOR_PAIR_COUNT_FULL 6 // max. 6 (12 characters WWL)
 
 // Delay after transmission for modes that do not use time synchronization. Zero delay allows continuous transmit mode for Horus V1 and V2
-#define RADIO_POST_TRANSMIT_DELAY_MS 18650 
+// #define RADIO_POST_TRANSMIT_DELAY_MS 1900 // Use 1900 for a,3 v,c/20 sec
+// #define RADIO_POST_TRANSMIT_DELAY_MS 2930 // Use 2930 for a,4 v,c/60 sec
+#define RADIO_POST_TRANSMIT_DELAY_MS 4970 // Use 4970 for a,3 v,c/60 sec
 
 // Threshold for time-synchronized modes regarding how far from scheduled transmission time the transmission is still allowed
 #define RADIO_TIME_SYNC_THRESHOLD_MS 2000  //Default
@@ -66,7 +68,7 @@
 // Based on measurements Mark VK5QI, enabling this reduces power consumption by about 30-40 mA (~50%) to around 30-50 mA,
 // where the consumption is 70-90 mA when power saving is not enabled and any radio transmitters are idle.
 // See the README for details about power consumption.
-#define GPS_POWER_SAVING_ENABLE false
+#define GPS_POWER_SAVING_ENABLE true
 
 // Enable NMEA output from GPS via external serial port. This disables use of I²C bus (Si5351 and sensors) because the pins are shared.
 #define GPS_NMEA_OUTPUT_VIA_SERIAL_PORT_ENABLE false
@@ -194,9 +196,13 @@
 #define RADIO_SI4063_TX_HORUS_V1 false
 #define RADIO_SI4063_TX_HORUS_V1_COUNT 1
 #define RADIO_SI4063_TX_HORUS_V2 true
-#define RADIO_SI4063_TX_HORUS_V2_COUNT 8
+#define RADIO_SI4063_TX_HORUS_V2_COUNT 3
 #define RADIO_SI4063_TX_CATS true
 #define RADIO_SI4063_TX_CATS_COUNT 1
+// Added second block of HV2 here
+// Count will be doubled as a result
+#define RADIO_SI4063_TX_HORUS_B2 true
+#define RADIO_SI4063_TX_HORUS_B2_COUNT 3
 
 // Continuous transmit mode can be enabled for *either* Horus V1 or V2, but not both. This disables all other transmission modes.
 // The continuous mode transmits Horus 4FSK preamble between transmissions
@@ -205,15 +211,16 @@
 #define RADIO_SI4063_TX_HORUS_V2_CONTINUOUS false
 
 // Individual units may be off frequency by large amounts
+// Lowered 5MHz for dual and shifted 5 seconds for aprs
 
 // Transmit frequencies for the Si4063 transmitter modes
-#define RADIO_SI4063_TX_FREQUENCY_CW        433169900
-#define RADIO_SI4063_TX_FREQUENCY_PIP       433168000
-#define RADIO_SI4063_TX_FREQUENCY_APRS_1200 433169900
+#define RADIO_SI4063_TX_FREQUENCY_CW        433162000
+#define RADIO_SI4063_TX_FREQUENCY_PIP       433162000
+#define RADIO_SI4063_TX_FREQUENCY_APRS_1200 433167000
 // If using Horusemod there is no need for offset. The script tunes it.
-#define RADIO_SI4063_TX_FREQUENCY_HORUS_V1  433168000
-#define RADIO_SI4063_TX_FREQUENCY_HORUS_V2  433169900
-#define RADIO_SI4063_TX_FREQUENCY_CATS      433169900
+#define RADIO_SI4063_TX_FREQUENCY_HORUS_V1  433162000
+#define RADIO_SI4063_TX_FREQUENCY_HORUS_V2  433162000
+#define RADIO_SI4063_TX_FREQUENCY_CATS      433167000
 
 /**
  * RS41 only: External Si5351 radio chip transmission configuration
@@ -282,12 +289,12 @@
  */
 
 #define APRS_CALLSIGN CALLSIGN
-#define APRS_SSID '8'
+#define APRS_SSID 'B'
 // See APRS symbol table documentation in: http://www.aprs.org/symbols/symbolsX.txt
 #define APRS_SYMBOL_TABLE '/' // '/' denotes primary and '\\' denotes alternate APRS symbol table
-#define APRS_SYMBOL '8'
-#define APRS_COMMENT "You define here"
-#define APRS_RELAYS "WIDE1-1,WIDE2-1" // Do not include any spaces in the APRS_RELAYS
+#define APRS_SYMBOL 'O'
+#define APRS_COMMENT "Primary track on Horus-V2 433.163, RS41ng XTAL Mod"
+#define APRS_RELAYS "WIDE2-1" // Do not include any spaces in the APRS_RELAYS
 #define APRS_DESTINATION "APZ41N"
 // Set alt-net destination
 // #define APRS_DESTINATION "STMTX" 
@@ -297,16 +304,16 @@
 
 // Schedule transmission every N seconds, counting from beginning of an hour (based on GPS time). Set to zero to disable time sync.
 // See the README file for more detailed documentation about time sync and its offset setting
-#define APRS_TIME_SYNC_SECONDS 180
+#define APRS_TIME_SYNC_SECONDS 60
 // Delay transmission for an N second offset, counting from the scheduled time set with TIME_SYNC_SECONDS.
-#define APRS_TIME_SYNC_OFFSET_SECONDS 41
+#define APRS_TIME_SYNC_OFFSET_SECONDS 17
 
 /**
  * Common Horus 4FSK mode settings 80 works well. There is times x10!
  */
 
-#define HORUS_FREQUENCY_OFFSET_SI4032 80
-#define HORUS_FREQUENCY_OFFSET_SI4063 80
+#define HORUS_FREQUENCY_OFFSET_SI4032 70
+#define HORUS_FREQUENCY_OFFSET_SI4063 70
 
 /**
  * Horus V1 4FSK mode settings (deprecated, please use Horus V2 mode)
@@ -335,7 +342,7 @@
 
 // NOTE: Payload ID 256 (4FSKTEST-V2) is for testing purposes only, and should not be used on an actual flight.
 // Please request a new payload ID in GitHub according to the instructions at: https://github.com/projecthorus/horusdemodlib/wiki#how-do-i-transmit-it
-#define HORUS_V2_PAYLOAD_ID 256
+#define HORUS_V2_PAYLOAD_ID 5321
 #define HORUS_V2_BAUD_RATE_SI4032 100
 #define HORUS_V2_BAUD_RATE_SI4063 100
 #define HORUS_V2_BAUD_RATE_SI5351 50
@@ -357,17 +364,17 @@
 // The protocol is meant to allow for a much higher channel capacity, so beaconing every second is totally fine.
 // For more information, see here: https://cats.radio/
 #define CATS_CALLSIGN CALLSIGN
-#define CATS_SSID 36 // 0 - 255
+#define CATS_SSID 51 // 0 - 255
 // Balloon. See the CATS standard for more options
 // https://gitlab.scd31.com/cats/cats-standard/-/blob/master/standard.pdf
-#define CATS_ICON 8 //13 is balloon
-// #define CATS_ICON 4 // 18 is person, 8 orange square, 5 truck, 23 bicycle, 2 car 
-#define CATS_COMMENT "p70 RS41ng xtal mod"
+#define CATS_ICON 13 //13 is balloon
+// #define CATS_ICON 5 // 18 is person, 8 orange square, 5 truck, 23 bicycle, 2 car 
+#define CATS_COMMENT "433.168 Primary tracking Horus-V2 RS41ng xtal mod"
 #define CATS_REPORTED_TX_POWER_DBM 18
 // You probably want this to be true
 // Set to false if you're using your radiosonde for something other than a balloon payload
 // We don't want non-balloons showing up as balloons on FELINET!
-#define CATS_IS_BALLOON false
+#define CATS_IS_BALLOON true
 
 // Schedule transmission every N seconds, counting from beginning of an hour (based on GPS time). Set to zero to disable time sync.
 // See the README file for more detailed documentation about time sync and its offset setting

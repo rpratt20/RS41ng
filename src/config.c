@@ -89,12 +89,12 @@ char *aprs_comment_templates[] = {
 //        " $loc12 - " APRS_COMMENT,
 //        " $teC $hu% $prmb PC $pc RI $ri uR/h - " APRS_COMMENT,
 //        " $tiC $tc $ct $cc " APRS_COMMENT,
-        " $tiC $tc $tl $cc $ct " APRS_COMMENT,
+        " $alt $cl $tiC $tc $tl " APRS_COMMENT,
         NULL
 };
 
 char *cats_comment_templates[] = {
-    CATS_COMMENT,
+    " $alt $cl $tc $tl " CATS_COMMENT,
     NULL
 };
 
