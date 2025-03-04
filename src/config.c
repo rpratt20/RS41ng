@@ -101,7 +101,8 @@ char *cats_comment_templates[] = {
 //    "$dc $gu $sv $lat $lon - $hh:$mm:$ss @ $tow ms",
 //    "T:$teC H:$hu% P:$prmb - " CATS_COMMENT,
 //    "T:$teC H:$hu% P:$prmb PC:$pc RI:$ri uR/h - " CATS_COMMENT,
-    CATS_COMMENT,
+    "$tow CLIMB:$cl - " CATS_COMMENT,
+//    CATS_COMMENT,
     NULL
 };
 
