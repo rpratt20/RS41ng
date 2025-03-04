@@ -933,13 +933,13 @@ bool radio_handle_time_sync()
         return false;
     }
 
-    uint32_t time_sync_offset_millis = radio_current_transmit_entry->time_sync_seconds_offset * 1000;
+    uint32_t time_sync_offset_millis = radio_current_transmit_entry->time_sync_seconds_offset;
 
     if (time_millis < time_sync_offset_millis) {
         return false;
     }
 
-    uint32_t time_sync_millis = radio_current_transmit_entry->time_sync_seconds * 1000;
+    uint32_t time_sync_millis = radio_current_transmit_entry->time_sync_seconds;
 
     uint32_t time_with_offset_millis = time_millis - time_sync_offset_millis;
     uint32_t time_sync_period_millis = time_with_offset_millis % time_sync_millis;
