@@ -97,6 +97,9 @@ The main features the RS41ng firmware are:
   * [Horus 4FSK v1 and v2 modes](https://github.com/projecthorus/horusdemodlib/wiki) that has improved performance compared to APRS or RTTY
     * There is an option to use continuous transmit mode (for either V1 or V2 mode), which helps with receiver frequency synchronization and improves reception.
     * In order to use Horus 4FSK mode on a flight, you will need to request a new Horus 4FSK payload ID in GitHub according to the instructions at: https://github.com/projecthorus/horusdemodlib/wiki#how-do-i-transmit-it
+  * [CATS - Communication And Telemetry System](https://cats.radio/) packet radio standard, which has a modulation much more efficient than APRS
+    * The primary benefit of CATS over APRS and Horus 4FSK is that it allows for fast beacon times (1 Hz or more) without congesting the network.
+    * For more details on using CATS, see the CATS website and the notes below.
   * Morse code (CW)
   * "Pip" mode, which transmits a short beep generated using CW to indicate presence of the transmitter
   * **RS41 only:** JT65/JT9/JT4/FT8/WSPR/FSQ digital modes on HF/VHF amateur radio bands using an external Si5351 clock generator connected to the external I²C bus
@@ -127,6 +130,7 @@ On the internal Si4032 (RS41) and Si4063 (DFM-17) transmitters:
 
 * APRS (1200 baud)
 * Horus 4FSK v1 and v2 (100 baud)
+* CATS (9600 baud)
 * Morse code (CW)
 * "Pip" - a short beep to indicate presence of the transmitter
 
@@ -148,7 +152,17 @@ On an external Si5351 clock generator connected to the external I²C bus of the 
 * The Horus 4FSK v1 and v2 modes have significantly [improved performance compared to APRS or RTTY](https://github.com/projecthorus/horusdemodlib/wiki).
 * Use [horus-gui](https://github.com/projecthorus/horus-gui) software to receive the 4FSK mode and to submit packets to [Habhub](http://habhub.org/) high-altitude balloon tracking platform.
 * See [horus-gui installation and usage instructions](https://github.com/projecthorus/horusdemodlib/wiki/1.1-Horus-GUI-Reception-Guide-(Windows-Linux-OSX)) and [horusdemodlib](https://github.com/projecthorus/horusdemodlib) library that is responsible for demodulating the signal.
-* In order to use Horus 4FSK mode on a flight, you will need to request a new Horus 4FSK payload ID in GitHub according to the instructions at: https://github.com/projecthorus/horusdemodlib/wiki#how-do-i-transmit-it
+* In order to use Horus 4FSK mode on a flight, you will need to request a new Horus 4FSK payload ID in GitHub according to the instructions at: https://github.com/projecthorus/horusdemodlib/wiki#how-do-i-transmit-it 
+
+#### Notes about CATS
+
+* CATS is a [modern packet radio standard](https://cats.radio/) designed for communication and telemetry. Due to its increased efficiency over APRS, it allows for fast beacon times (1 Hz or more) without congesting the network.
+* To receive CATS, you can either use an [I-Gate board](https://www.tindie.com/products/hamcats/cats-i-gate-board/) on a Raspberry Pi, or just a standard RTL-SDR dongle.
+  * See [the CATS I-Gate board software](https://gitlab.scd31.com/cats/igate).
+  * See [the CATS SDR software](https://gitlab.scd31.com/cats/sdr-igate).
+* In either case, CATS packets that are received get forwarded to FELINET, and relayed to APRS-IS. This means your CATS packets will show up on [aprs.fi](https://aprs.fi)
+  * If you're relying on APRS gating, be sure to set an SSID below 100 or the APRS network may reject it.
+* For more information, be sure to check [the CATS standard](https://gitlab.scd31.com/cats/cats-standard/builds/artifacts/master/file/standard.pdf?job=build).
 
 ### External sensors (RS41 only)
 
@@ -185,9 +199,10 @@ Sensor driver code contributions are welcome!
         * For RS41, the settings beginning with `RADIO_SI4032_` to select transmit power and the modes to transmit
         * For DFM-17, the settings beginning with `RADIO_SI4063_` to select transmit power and the modes to transmit
         * `HORUS_V2_PAYLOAD_ID` if you transmit Horus 4FSK
-        * `APRS_COMMENT` if you transmit APRS
+        * At least `APRS_SSID`, `APRS_SYMBOL` and `APRS_COMMENT` if you transmit APRS
+        * At least `CATS_SSID`, `CATS_ICON` and `CATS_COMMENT` if you transmit CATS
 2. Set up transmitted message templates in `config.c`, depending on the modes you use.
-   You can customize the APRS and CW messages in more detail here.
+   You can customize the APRS, CATS and CW messages in more detail here.
 
 ### Power consumption and power-saving features
 
@@ -604,9 +619,12 @@ rtl_fm -f 432500000 -M fm -s 250k -r 48000 -g 22 - | ./aprs -
 
 * Mikael Nousiainen OH3BHX <mikael@0xfeed.tech>
 * Mike Hojnowski KD2EAT contributed significantly to Graw DFM-17 support
+* Stephen D (https://www.scd31.com/) and Andrew Koenig KE5GDB implemented CATS support
 * Various authors with smaller contributions from GitHub pull requests
 * Original codebase: DF8OE and other authors of the [RS41HUP](https://github.com/df8oe/RS41HUP) project
 * Horus 4FSK code adapted from [darksidelemm fork of RS41HUP](https://github.com/darksidelemm/RS41HUP) project
+* CATS code adapted from [CATS reference implementation](https://gitlab.scd31.com/cats/ham-cats/)
+  * LDPC encoder adapted from [libCATS](https://github.com/CamK06/libCATS)
 
 # Additional documentation
 
@@ -638,6 +656,7 @@ rtl_fm -f 432500000 -M fm -s 250k -r 48000 -g 22 - | ./aprs -
 
 ## Alternative RS41 firmware projects (only for RS41!)
 
+* https://github.com/Nevvman18/rs41-nfw - RS41-NFW - An alternative to RS41ng for supporting new RS41 PCB revisions and some of the built-in sensors
 * https://github.com/df8oe/RS41HUP - The original amateur radio firmware for RS41
 * https://github.com/darksidelemm/RS41HUP - A fork of the original firmware that includes support for Horus 4FSK (but omits APRS)
 * https://github.com/darksidelemm/RS41FOX - RS41-FOX - RS41 Amateur Radio Direction Finding (Foxhunting) Beacon

@@ -17,7 +17,6 @@
 #error "Please define either RS41 or DFM17."
 #endif
 
-
 // Enable semihosting to receive debug logs during development
 // See the README for details on how to set up debugging and debug logs with GDB
 // NOTE: Semihosting has to be disabled when the radiosonde is not connected to an STM32 programmer dongle, otherwise the firmware will not run.
@@ -74,6 +73,42 @@
 #if (GPS_NMEA_OUTPUT_VIA_SERIAL_PORT_ENABLE) && ((RADIO_SI5351_ENABLE) || (SENSOR_BMP280_ENABLE))
 #error GPS NMEA output via serial port cannot be enabled simultaneously with the I2C bus.
 #endif
+
+/**
+ * Advanced GPS settings - Do not modify if you are not sure what you are doing!
+ * The default settings are suitable for high-altitude balloon flights.
+ */
+
+// GPS Dynamic Platform model: (default: 6 - Airborne <1g)
+// - 0 Portable
+// - 2 Stationary
+// - 3 Pedestrian
+// - 4 Automotive
+// - 5 Sea
+// - 6 Airborne with <1g Acceleration
+// - 7 Airborne with <2g Acceleration
+// - 8 Airborne with <4g Acceleration
+#define GPS_DYNAMIC_MODEL 6
+
+// GPS Position Fixing Mode: (default: 2 - 3D only)
+// - 1: 2D only
+// - 2: 3D only
+// - 3: Auto 2D/3D
+#define GPS_POSITION_FIXING_MODE 2
+
+// Measurement Rate in milliseconds (default: 1000)
+// GPS measurements are taken every GPS_MEASUREMENT_RATE milliseconds
+// The UBX-G6010 in the older RS41 radiosondes (PCB revisions 4x1 and 4x2) should support rates up to 5 Hz (200 ms).
+// * Values < 200ms do not seem to work (not accepted by the GPS chip). 1000ms is a good value for most flights.
+#define GPS_MEASUREMENT_RATE 1000
+
+// Rate for GPS message updates sent by the GPS chip (default: 1, send message for every measurement done)
+// Message rate is defined as the number of measurements between messages.
+// For example:
+// * Rate of 1 will lead to updates for every measurement (e.g. every second if measurement rate is set to 1000 ms)
+// * Rate of 5 will lead to updates for every 5th measurement (e.g. every 5 seconds if measurement rate is set to 1000 ms)
+#define GPS_POSITION_MESSAGE_RATE 1
+#define GPS_TIME_MESSAGE_RATE 1
 
 /**
  * RS41 only: Global configuration (there is no I²C bus exposed in DFM-17)
@@ -153,6 +188,8 @@
 #define RADIO_SI4032_TX_HORUS_V1_COUNT 1
 #define RADIO_SI4032_TX_HORUS_V2 true
 #define RADIO_SI4032_TX_HORUS_V2_COUNT 6
+#define RADIO_SI4032_TX_CATS false
+#define RADIO_SI4032_TX_CATS_COUNT 1
 
 // Continuous transmit mode can be enabled for *either* Horus V1 or V2, but not both. This disables all other transmission modes.
 // The continuous mode transmits Horus 4FSK preamble between transmissions
@@ -161,12 +198,13 @@
 #define RADIO_SI4032_TX_HORUS_V2_CONTINUOUS false
 
 // Transmit frequencies for the Si4032 transmitter modes
-#define RADIO_SI4032_TX_FREQUENCY_CW        432500000
-#define RADIO_SI4032_TX_FREQUENCY_PIP       432500000
+#define RADIO_SI4032_TX_FREQUENCY_CW        432300000
+#define RADIO_SI4032_TX_FREQUENCY_PIP       432300000
 #define RADIO_SI4032_TX_FREQUENCY_APRS_1200 432500000
 // Use a frequency offset to place FSK tones slightly above the defined frequency for SSB reception
-#define RADIO_SI4032_TX_FREQUENCY_HORUS_V1  432501000
-#define RADIO_SI4032_TX_FREQUENCY_HORUS_V2  432501000
+#define RADIO_SI4032_TX_FREQUENCY_HORUS_V1  432301000
+#define RADIO_SI4032_TX_FREQUENCY_HORUS_V2  432301000
+#define RADIO_SI4032_TX_FREQUENCY_CATS      434100000
 
 /**
  * DFM-17 only: Built-in Si4063 radio chip transmission configuration
@@ -189,6 +227,8 @@
 #define RADIO_SI4063_TX_HORUS_V1_COUNT 1
 #define RADIO_SI4063_TX_HORUS_V2 true
 #define RADIO_SI4063_TX_HORUS_V2_COUNT 6
+#define RADIO_SI4063_TX_CATS false
+#define RADIO_SI4063_TX_CATS_COUNT 1
 
 // Continuous transmit mode can be enabled for *either* Horus V1 or V2, but not both. This disables all other transmission modes.
 // The continuous mode transmits Horus 4FSK preamble between transmissions
@@ -203,6 +243,7 @@
 // Use a frequency offset to place FSK tones slightly above the defined frequency for SSB reception
 #define RADIO_SI4063_TX_FREQUENCY_HORUS_V1  432501000
 #define RADIO_SI4063_TX_FREQUENCY_HORUS_V2  432501000
+#define RADIO_SI4063_TX_FREQUENCY_CATS      430500000
 
 /**
  * RS41 only: External Si5351 radio chip transmission configuration
@@ -275,6 +316,8 @@
 // See APRS symbol table documentation in: http://www.aprs.org/symbols/symbolsX.txt
 #define APRS_SYMBOL_TABLE '/' // '/' denotes primary and '\\' denotes alternate APRS symbol table
 #define APRS_SYMBOL 'O'
+// Maximum length: depends on the packet contents, but keeping this under 100 characters is usually safe.
+// Note that many hardware APRS receivers show a limited number of APRS comment characters, such as 43 or 67 chars.
 #define APRS_COMMENT "RS41ng radiosonde firmware test"
 #define APRS_RELAYS "WIDE1-1,WIDE2-1" // Do not include any spaces in the APRS_RELAYS
 #define APRS_DESTINATION "APZ41N"
@@ -335,6 +378,36 @@
 #define HORUS_V2_TIME_SYNC_SECONDS 0
 // Delay transmission for an N second offset, counting from the scheduled time set with TIME_SYNC_SECONDS.
 #define HORUS_V2_TIME_SYNC_OFFSET_SECONDS 0
+
+/**
+ * CATS mode settings
+ */
+// CATS is a new digital mode, vaguely meant to be a better APRS (but also much more powerful)
+// While it offers a number of advantages, probably the best one for balloons is the rapid beacon rate.
+// The protocol is meant to allow for a much higher channel capacity, so beaconing every second is totally fine.
+// For more information, see here: https://cats.radio/
+#define CATS_CALLSIGN CALLSIGN
+// The CATS SSID value is a number from 0 to 255, used to differentiate between stations with the same call sign.
+// There is no special meaning for the numbers (compared to APRS SSIDs).
+// If you're relying on APRS gating, be sure to set an SSID below 100 or the APRS network may reject it.
+#define CATS_SSID 11
+// CATS icon
+// Some common icons: 0 = no icon, 2 = car, 3 = house, 13 = balloon, 14 = airplane, 18 = person, 21 = satellite, 22 = computer
+// See the CATS standard for more options https://gitlab.scd31.com/cats/cats-standard/builds/artifacts/master/file/standard.pdf?job=build
+#define CATS_ICON 13
+// The maximum CATS comment length supported by RS41ng is about 100 characters. The CATS standard allows for up to 255 characters.
+#define CATS_COMMENT "RS41ng radiosonde firmware test"
+#define CATS_REPORTED_TX_POWER_DBM 17
+// CATS is balloon - You probably want this to be true for a balloon payload
+// Set to false if you're using your radiosonde for something other than a balloon payload
+// We don't want non-balloons showing up as balloons on FELINET!
+#define CATS_IS_BALLOON true
+
+// Schedule transmission every N seconds, counting from beginning of an hour (based on GPS time). Set to zero to disable time sync.
+// See the README file for more detailed documentation about time sync and its offset setting
+#define CATS_TIME_SYNC_SECONDS 0
+// Delay transmission for an N second offset, counting from the scheduled time set with TIME_SYNC_SECONDS.
+#define CATS_TIME_SYNC_OFFSET_SECONDS 0
 
 /**
  * CW settings
