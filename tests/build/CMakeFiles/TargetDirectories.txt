@@ -1,0 +1,9 @@
+/usr/local/src/RS41ng/build/CMakeFiles/edit_cache.dir
+/usr/local/src/RS41ng/build/CMakeFiles/rebuild_cache.dir
+/usr/local/src/RS41ng/build/src/CMakeFiles/RS41ng.elf.dir
+/usr/local/src/RS41ng/build/src/CMakeFiles/program.dir
+/usr/local/src/RS41ng/build/src/CMakeFiles/edit_cache.dir
+/usr/local/src/RS41ng/build/src/CMakeFiles/rebuild_cache.dir
+/usr/local/src/RS41ng/build/tests/CMakeFiles/RS41ng_top.dir
+/usr/local/src/RS41ng/build/tests/CMakeFiles/edit_cache.dir
+/usr/local/src/RS41ng/build/tests/CMakeFiles/rebuild_cache.dir
