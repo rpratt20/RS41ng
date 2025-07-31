@@ -8,7 +8,7 @@
 
 // Define radiosonde type. Remove the "//" comment to select either RS41 or DFM17.
 //#define RS41
-//#define DFM17
+#define DFM17
 
 #if !defined(RS41) && !defined(DFM17)
 #error "No hardware type specified. Please define RS41 or DFM17."
@@ -28,27 +28,42 @@
  */
 
 // Set the tracker amateur radio call sign here
-#define CALLSIGN "MYCALL"
-
+#define CALLSIGN "DFM-TEST"
 // Disabling LEDs will save power
 // Red LED: Lit during initialization and transmit.
 // Green LED: Blinking fast when there is no GPS fix. Blinking slowly when the GPS has a fix.
 #define LEDS_ENABLE true
 
 // Disable LEDs above the specified altitude (in meters) to save power. Set to zero to disable this behavior.
-#define LEDS_DISABLE_ALTITUDE_METERS 1000
+#define LEDS_DISABLE_ALTITUDE_METERS 1500
 
 // Allow powering off the sonde by pressing the button for over a second (when the sonde is not transmitting)
 #define ALLOW_POWER_OFF false
+
+// Cutdown parameters for boom switch U2. Cutdown signal adds 12K resistence to ground and requires hardware design.
+// Altitude must be above LEDS_DISABLE_ALTITUDE_METERS as safety parameter preventing ground activation. 
+// Cutdown REQUIRES adjustments in telemetry.c if statements. As set it assumes travel to South and East.
+// Switch position telemetry is available for aprs or CATS
+// Disable by setting Zero Lat, -180 Lon, Alt>highest burst possible. 
+#define CUT_ENABLED true
+#define CUTDOWN_LATITUDE 43.61
+#define CUTDOWN_LONGITUDE -97.73
+#define CUTDOWN_ALTITUDE 12000
+
+// Use multiplier 1 for no rate change or alt above burst.
+#define SLOW_RATE_TRANSMIT_ALTITUDE 12000
+#define SLOW_RATE_TRANSMIT_MULTIPLIER 2 
+
 
 // Number of character pairs to include in locator
 #define LOCATOR_PAIR_COUNT_FULL 6 // max. 6 (12 characters WWL)
 
 // Delay after transmission for modes that do not use time synchronization. Zero delay allows continuous transmit mode for Horus V1 and V2.
-#define RADIO_POST_TRANSMIT_DELAY_MS 1000
+// 3400 for aprs, 3 v2, CATS, 3 v2, 1 CW-ID and rate change to 2.
+#define RADIO_POST_TRANSMIT_DELAY_MS 3400
 
 // Threshold for time-synchronized modes regarding how far from scheduled transmission time the transmission is still allowed
-#define RADIO_TIME_SYNC_THRESHOLD_MS 2000
+#define RADIO_TIME_SYNC_THRESHOLD_MS 5000
 
 // Number of leap seconds to add to the raw GPS time reported by the GPS chip (see https://timetoolsltd.com/gps/what-is-gps-time/ for more info)
 // This value is used by default, but if the received GPS data contains indication about leap seconds, that one is used instead.
@@ -65,7 +80,7 @@
 // Based on measurements Mark VK5QI, enabling this reduces power consumption by about 30-40 mA (~50%) to around 30-50 mA,
 // where the consumption is 70-90 mA when power saving is not enabled and any radio transmitters are idle.
 // See the README for details about power consumption.
-#define GPS_POWER_SAVING_ENABLE false
+#define GPS_POWER_SAVING_ENABLE true
 
 // Enable NMEA output from GPS via external serial port. This disables use of I²C bus (Si5351 and sensors) because the pins are shared.
 #define GPS_NMEA_OUTPUT_VIA_SERIAL_PORT_ENABLE false
@@ -100,14 +115,14 @@
 // GPS measurements are taken every GPS_MEASUREMENT_RATE milliseconds
 // The UBX-G6010 in the older RS41 radiosondes (PCB revisions 4x1 and 4x2) should support rates up to 5 Hz (200 ms).
 // * Values < 200ms do not seem to work (not accepted by the GPS chip). 1000ms is a good value for most flights.
-#define GPS_MEASUREMENT_RATE 1000
+#define GPS_MEASUREMENT_RATE 1500
 
 // Rate for GPS message updates sent by the GPS chip (default: 1, send message for every measurement done)
 // Message rate is defined as the number of measurements between messages.
 // For example:
 // * Rate of 1 will lead to updates for every measurement (e.g. every second if measurement rate is set to 1000 ms)
 // * Rate of 5 will lead to updates for every 5th measurement (e.g. every 5 seconds if measurement rate is set to 1000 ms)
-#define GPS_POSITION_MESSAGE_RATE 1
+#define GPS_POSITION_MESSAGE_RATE 3
 #define GPS_TIME_MESSAGE_RATE 1
 
 /**
@@ -182,11 +197,11 @@
 #define RADIO_SI4032_TX_CW_COUNT 1
 #define RADIO_SI4032_TX_PIP false
 #define RADIO_SI4032_TX_PIP_COUNT 6
-#define RADIO_SI4032_TX_APRS true
+#define RADIO_SI4032_TX_APRS false
 #define RADIO_SI4032_TX_APRS_COUNT 2
 #define RADIO_SI4032_TX_HORUS_V1 false
 #define RADIO_SI4032_TX_HORUS_V1_COUNT 1
-#define RADIO_SI4032_TX_HORUS_V2 true
+#define RADIO_SI4032_TX_HORUS_V2 false
 #define RADIO_SI4032_TX_HORUS_V2_COUNT 6
 #define RADIO_SI4032_TX_CATS false
 #define RADIO_SI4032_TX_CATS_COUNT 1
@@ -212,22 +227,36 @@
 
 // Si4063 transmit power: 0..127
 // TODO: Document Si4063 transmit power levels
-#define RADIO_SI4063_TX_POWER 127
+#define RADIO_SI4063_TX_POWER 70
+#define RADIO_SI4063_TX_POWER_HORUS 28
+
+//Added Option to include temperature correction of radio transmit frequency. (Recommended for temperature below 0C)
+#define RADIO_SI4063_TX_CORRECT true
+
+// Telemetry will depend on correction being true also and applies to Horus V2 only
+// Telemetry is defaulted off by radsense or pulsecounter setting above.
+// Telemetry must be added in APRS or CATS COMMENTS but included in HV2.   
+#define XTAL_CORRECTION_TELEMETRY_ENABLE true
 
 // Which modes to transmit using the built-in Si4063 transmitter chip
 // The COUNT settings define the number of times that each type of transmission is repeated
-#define RADIO_SI4063_TX_CW false
+#define RADIO_SI4063_TX_CW true
 #define RADIO_SI4063_TX_CW_COUNT 1
 #define RADIO_SI4063_TX_PIP false
-#define RADIO_SI4063_TX_PIP_COUNT 6
+#define RADIO_SI4063_TX_PIP_COUNT 1
 #define RADIO_SI4063_TX_APRS true
-#define RADIO_SI4063_TX_APRS_COUNT 2
+#define RADIO_SI4063_TX_APRS_COUNT 1
 #define RADIO_SI4063_TX_HORUS_V1 false
 #define RADIO_SI4063_TX_HORUS_V1_COUNT 1
 #define RADIO_SI4063_TX_HORUS_V2 true
-#define RADIO_SI4063_TX_HORUS_V2_COUNT 6
-#define RADIO_SI4063_TX_CATS false
+#define RADIO_SI4063_TX_HORUS_V2_COUNT 3
+#define RADIO_SI4063_TX_CATS true
 #define RADIO_SI4063_TX_CATS_COUNT 1
+// Added second block of HV2 here
+// Counts will be additive as a result
+#define RADIO_SI4063_TX_HORUS_B2 true
+#define RADIO_SI4063_TX_HORUS_B2_COUNT 3
+
 
 // Continuous transmit mode can be enabled for *either* Horus V1 or V2, but not both. This disables all other transmission modes.
 // The continuous mode transmits Horus 4FSK preamble between transmissions
@@ -236,13 +265,13 @@
 #define RADIO_SI4063_TX_HORUS_V2_CONTINUOUS false
 
 // Transmit frequencies for the Si4063 transmitter modes
-#define RADIO_SI4063_TX_FREQUENCY_CW        432500000
+#define RADIO_SI4063_TX_FREQUENCY_CW        433168000
 #define RADIO_SI4063_TX_FREQUENCY_PIP       432500000
-#define RADIO_SI4063_TX_FREQUENCY_APRS_1200 432500000
+#define RADIO_SI4063_TX_FREQUENCY_APRS_1200 144390000
 // Use a frequency offset to place FSK tones slightly above the defined frequency for SSB reception
 #define RADIO_SI4063_TX_FREQUENCY_HORUS_V1  432501000
-#define RADIO_SI4063_TX_FREQUENCY_HORUS_V2  432501000
-#define RADIO_SI4063_TX_FREQUENCY_CATS      430500000
+#define RADIO_SI4063_TX_FREQUENCY_HORUS_V2  433168000
+#define RADIO_SI4063_TX_FREQUENCY_CATS      433168000
 
 /**
  * RS41 only: External Si5351 radio chip transmission configuration
@@ -317,8 +346,8 @@
 #define APRS_SYMBOL 'O'
 // Maximum length: depends on the packet contents, but keeping this under 100 characters is usually safe.
 // Note that many hardware APRS receivers show a limited number of APRS comment characters, such as 43 or 67 chars.
-#define APRS_COMMENT "RS41ng radiosonde firmware test"
-#define APRS_RELAYS "WIDE1-1,WIDE2-1" // Do not include any spaces in the APRS_RELAYS
+#define APRS_COMMENT "DFM test"
+#define APRS_RELAYS "WIDE2-1" // Do not include any spaces in the APRS_RELAYS, suggest WIDE2-1 for balloon
 #define APRS_DESTINATION "APZ41N"
 #define APRS_DESTINATION_SSID '0'
 // Generate an APRS weather report instead of a position report. This will override the APRS symbol with the weather station symbol.
@@ -334,8 +363,8 @@
  * Common Horus 4FSK mode settings
  */
 
-#define HORUS_FREQUENCY_OFFSET_SI4032 0
-#define HORUS_FREQUENCY_OFFSET_SI4063 0
+#define HORUS_FREQUENCY_OFFSET_SI4032 80
+#define HORUS_FREQUENCY_OFFSET_SI4063 80
 
 /**
  * Horus V1 4FSK mode settings (deprecated, please use Horus V2 mode)
@@ -389,13 +418,13 @@
 // The CATS SSID value is a number from 0 to 255, used to differentiate between stations with the same call sign.
 // There is no special meaning for the numbers (compared to APRS SSIDs).
 // If you're relying on APRS gating, be sure to set an SSID below 100 or the APRS network may reject it.
-#define CATS_SSID 11
+#define CATS_SSID 41
 // CATS icon
 // Some common icons: 0 = no icon, 2 = car, 3 = house, 13 = balloon, 14 = airplane, 18 = person, 21 = satellite, 22 = computer
 // See the CATS standard for more options https://gitlab.scd31.com/cats/cats-standard/builds/artifacts/master/file/standard.pdf?job=build
 #define CATS_ICON 13
 // The maximum CATS comment length supported by RS41ng is about 100 characters. The CATS standard allows for up to 255 characters.
-#define CATS_COMMENT "RS41ng radiosonde firmware test"
+#define CATS_COMMENT "DFM17"
 #define CATS_REPORTED_TX_POWER_DBM 17
 // CATS is balloon - You probably want this to be true for a balloon payload
 // Set to false if you're using your radiosonde for something other than a balloon payload
@@ -408,6 +437,15 @@
 // Delay transmission for an N second offset, counting from the scheduled time set with TIME_SYNC_SECONDS.
 #define CATS_TIME_SYNC_OFFSET_SECONDS 0
 
+// Use milliseconds for time synch when transmitting subsecond gps packets.
+// If using gps at a rate faster than 1 sec per fix and CATS transmit rate faster than 2 seconds per packet synch seconds will need
+//  to be adjusted to milliseconds. 200 is tested using RADIO_TIME_SYNC_THRESHOLD_MS 100 and RADIO_POST_TRANSMIT_DELAY_MS 0. 
+// Not all settings will function. This must be tested along with subsecond gps fixes.
+// Aprs.is and Felinenet will not update at these rates. Decoding must be logged locally.
+// Comment must be short.
+#define FAST_CATS false 
+#define FAST_CATS_TIME_SYNC_MILLI_SECONDS 200
+
 /**
  * CW settings
  */
@@ -417,7 +455,7 @@
 
 // Schedule transmission every N seconds, counting from beginning of an hour (based on GPS time). Set to zero to disable time sync.
 // See the README file for more detailed documentation about time sync and its offset setting
-#define CW_TIME_SYNC_SECONDS 0
+#define CW_TIME_SYNC_SECONDS 60
 // Delay transmission for an N second offset, counting from the scheduled time set with TIME_SYNC_SECONDS.
 #define CW_TIME_SYNC_OFFSET_SECONDS 0
 

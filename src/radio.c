@@ -191,7 +191,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = HORUS_V1_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = HORUS_V1_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_HORUS_V1,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
                 .symbol_rate = HORUS_V1_BAUD_RATE_SI4063,
                 .payload_encoder = &radio_horus_v1_payload_encoder,
                 .fsk_encoder_api = &mfsk_fsk_encoder_api,
@@ -203,7 +203,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = HORUS_V1_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = HORUS_V1_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_HORUS_V1,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
                 .symbol_rate = HORUS_V1_BAUD_RATE_SI4063,
                 .payload_encoder = &radio_horus_v1_idle_encoder,
                 .fsk_encoder_api = &mfsk_fsk_encoder_api,
@@ -216,7 +216,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = HORUS_V2_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = HORUS_V2_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_HORUS_V2,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
                 .symbol_rate = HORUS_V2_BAUD_RATE_SI4063,
                 .payload_encoder = &radio_horus_v2_payload_encoder,
                 .fsk_encoder_api = &mfsk_fsk_encoder_api,
@@ -228,7 +228,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = HORUS_V2_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = HORUS_V2_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_HORUS_V2,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
                 .symbol_rate = HORUS_V2_BAUD_RATE_SI4063,
                 .payload_encoder = &radio_horus_v2_idle_encoder,
                 .fsk_encoder_api = &mfsk_fsk_encoder_api,
@@ -258,7 +258,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = CW_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = CW_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_CW,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
                 .symbol_rate = MORSE_WPM_TO_SYMBOL_RATE(CW_SPEED_WPM),
                 .payload_encoder = &radio_cw_payload_encoder,
                 .fsk_encoder_api = &morse_fsk_encoder_api,
@@ -292,7 +292,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = HORUS_V1_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = HORUS_V1_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_HORUS_V1,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
                 .symbol_rate = HORUS_V1_BAUD_RATE_SI4063,
                 .payload_encoder = &radio_horus_v1_payload_encoder,
                 .fsk_encoder_api = &mfsk_fsk_encoder_api,
@@ -307,7 +307,7 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .time_sync_seconds = HORUS_V2_TIME_SYNC_SECONDS,
                 .time_sync_seconds_offset = HORUS_V2_TIME_SYNC_OFFSET_SECONDS,
                 .frequency = RADIO_SI4063_TX_FREQUENCY_HORUS_V2,
-                .tx_power = RADIO_SI4063_TX_POWER,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
                 .symbol_rate = HORUS_V2_BAUD_RATE_SI4063,
                 .payload_encoder = &radio_horus_v2_payload_encoder,
                 .fsk_encoder_api = &mfsk_fsk_encoder_api,
@@ -325,6 +325,21 @@ radio_transmit_entry radio_transmit_schedule[] = {
                 .tx_power = RADIO_SI4063_TX_POWER,
                 .payload_encoder = &radio_cats_payload_encoder,
                 .fsk_encoder_api = &raw_fsk_encoder_api,
+        },
+#endif
+#if RADIO_SI4063_TX_HORUS_B2
+        {
+                .enabled = RADIO_SI4063_TX_HORUS_B2,
+                .radio_type = RADIO_TYPE_SI4063,
+                .data_mode = RADIO_DATA_MODE_HORUS_V2,
+                .transmit_count = RADIO_SI4063_TX_HORUS_B2_COUNT,
+                .time_sync_seconds = HORUS_V2_TIME_SYNC_SECONDS,
+                .time_sync_seconds_offset = HORUS_V2_TIME_SYNC_OFFSET_SECONDS,
+                .frequency = RADIO_SI4063_TX_FREQUENCY_HORUS_V2,
+                .tx_power = RADIO_SI4063_TX_POWER_HORUS,
+                .symbol_rate = HORUS_V2_BAUD_RATE_SI4063,
+                .payload_encoder = &radio_horus_v2_payload_encoder,
+                .fsk_encoder_api = &mfsk_fsk_encoder_api,
         },
 #endif
 #endif
@@ -489,6 +504,7 @@ const bool wspr_locator_fixed_enabled = WSPR_LOCATOR_FIXED_ENABLED;
 radio_transmit_entry *radio_current_transmit_entry = NULL;
 static uint8_t radio_current_transmit_entry_index = 0;
 static uint8_t radio_transmit_entry_count = 0;
+static uint8_t post_transmit_extender = 1;
 
 static volatile uint32_t radio_post_transmit_delay_counter = 0;
 static volatile uint32_t radio_next_symbol_counter = 0;
@@ -848,8 +864,9 @@ static bool radio_transmit_symbol(radio_transmit_entry *entry)
 
 static void radio_reset_transmit_delay_counter()
 {
-    radio_post_transmit_delay_counter = RADIO_POST_TRANSMIT_DELAY_MS * SYSTEM_SCHEDULER_TIMER_TICKS_PER_SECOND / 1000;
+    radio_post_transmit_delay_counter = (RADIO_POST_TRANSMIT_DELAY_MS * SYSTEM_SCHEDULER_TIMER_TICKS_PER_SECOND / 1000) * post_transmit_extender;
 }
+
 
 static void radio_next_transmit_entry()
 {
@@ -940,6 +957,22 @@ bool radio_handle_time_sync()
     }
 
     uint32_t time_sync_millis = radio_current_transmit_entry->time_sync_seconds * 1000;
+
+    //--------------------------------------------------------------
+    // Need to adjust if using high gps fix rate with rapid CATS packet rate.
+    // Timing is entered in milliseconds and requires no conversion.
+    //-------------------------
+    if (FAST_CATS){
+    time_sync_millis = FAST_CATS_TIME_SYNC_MILLI_SECONDS;
+    }
+    //---------------------------------------------------------------
+
+    if (gps.altitude_mm / 1000 > SLOW_RATE_TRANSMIT_ALTITUDE) {
+        time_sync_millis = time_sync_millis * SLOW_RATE_TRANSMIT_MULTIPLIER;
+        post_transmit_extender = SLOW_RATE_TRANSMIT_MULTIPLIER;
+    } else { 
+          post_transmit_extender = 1;
+    }
 
     uint32_t time_with_offset_millis = time_millis - time_sync_offset_millis;
     uint32_t time_sync_period_millis = time_with_offset_millis % time_sync_millis;

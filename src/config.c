@@ -31,6 +31,9 @@
  * $gu - GPS data update indicator, 1 if GPS data was updated since time telemetry was read, 0 otherwise
  * $ct - Clock calibration trim value (0-31, only for DFM-17)
  * $cc - Clock calibration change count (only for DFM-17)
+ * $cd - Cutdown signal (only for DFM-17)
+ * $tc - Crystal_temperature_code for xtal (only for DFM-17)
+ * $tl - Crystal_lookup_code for xtal (only for DFM-17) not implemented yet
  *
  * Allowed message lengths:
  *
@@ -88,7 +91,8 @@ char *aprs_comment_templates[] = {
 //        " B$bu $loc12 $hh:$mm:$ss - " APRS_COMMENT,
 //        " $loc12 - " APRS_COMMENT,
 //        " $teC $hu% $prmb PC $pc RI $ri uR/h - " APRS_COMMENT,
-        " " APRS_COMMENT,
+//        " $tiC $tc $ct $cc " APRS_COMMENT,
+        " $alt $cd CUT $cl M/s $tc $tl " APRS_COMMENT,
         NULL
 };
 
@@ -98,10 +102,12 @@ char *aprs_comment_templates[] = {
  * The CATS standard allows for up to 255 characters.
  */
 char *cats_comment_templates[] = {
-//    "$dc $gu $sv $lat $lon - $hh:$mm:$ss @ $tow ms",
+//    "$dc $gu $sv $lat $lon - $hh:$mm:$ss @ $tow ms" CATS_COMMENT,
 //    "T:$teC H:$hu% P:$prmb - " CATS_COMMENT,
 //    "T:$teC H:$hu% P:$prmb PC:$pc RI:$ri uR/h - " CATS_COMMENT,
-    CATS_COMMENT,
+//    " $tow Climb:$clm/s - " CATS_COMMENT,
+   "$gu - $hh:$mm:$ss@$tow ms Climb:$cl Cut:$cd " CATS_COMMENT,
+//    CATS_COMMENT,
     NULL
 };
 

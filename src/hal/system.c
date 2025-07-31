@@ -134,6 +134,12 @@ static void gpio_init()
     gpio_init.GPIO_Mode = GPIO_Mode_Out_PP;
     gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(BANK_YELLOW_LED, &gpio_init);
+
+    // Boom Cutdown switch
+    gpio_init.GPIO_Pin = PIN_CUTDOWN;
+    gpio_init.GPIO_Mode = GPIO_Mode_Out_PP;
+    gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(BANK_CUTDOWN, &gpio_init);   
 #endif
 }
 
@@ -358,18 +364,28 @@ void system_set_red_led(bool enabled)
     }
 #endif
 }
-
+#ifdef DFM17
 void system_set_yellow_led(bool enabled)
 {
-#ifdef DFM17
+
     // Only DFM-17 has a yellow LED
     if (enabled) {
         GPIO_SetBits(BANK_YELLOW_LED, PIN_YELLOW_LED);
     } else {
         GPIO_ResetBits(BANK_YELLOW_LED, PIN_YELLOW_LED);
     }
-#endif
 }
+void system_set_cutdown(bool enabled)
+{
+    // Only DFM-17 has cutdown switch for boom
+    if (!enabled) {
+        GPIO_SetBits(BANK_CUTDOWN, PIN_CUTDOWN);
+    } else {
+        GPIO_ResetBits(BANK_CUTDOWN, PIN_CUTDOWN);
+    }
+}
+#endif
+
 
 void system_disable_irq()
 {

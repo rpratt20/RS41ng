@@ -78,6 +78,22 @@ size_t horus_packet_v2_create(uint8_t *payload, size_t length, telemetry_data *d
     uint16_t ext_pressure_mbar = (uint16_t) (data->pressure_mbar_100 / 10.0f);
     memcpy(custom_data_pointer, &ext_pressure_mbar, sizeof(ext_pressure_mbar));
 
+    #ifdef DFM17
+    // Unit: Count 
+    if (XTAL_CORRECTION_TELEMETRY_ENABLE) {
+        if ( !(pulse_counter_enabled || radsens_enabled) ){
+            uint8_t clock_capacitance = (uint8_t) (data->rp_xtal_code);
+            memcpy(custom_data_pointer, &clock_capacitance, sizeof(clock_capacitance));
+            custom_data_pointer += sizeof(clock_capacitance);
+
+        // Unit: Count  
+            uint8_t c_t_look = (uint8_t) (data->rp_lu_code);
+            memcpy(custom_data_pointer, &c_t_look, sizeof(c_t_look));
+            //custom_data_pointer += sizeof(c_t_look);
+        }
+    }
+    #endif
+
     if (pulse_counter_enabled || radsens_enabled) {
         // Unit: pulse count
         custom_data_pointer += sizeof(ext_pressure_mbar);

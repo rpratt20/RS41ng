@@ -72,6 +72,9 @@
 #define	BANK_YELLOW_LED	GPIOC
 #define PIN_YELLOW_LED	GPIO_Pin_7
 
+#define	BANK_CUTDOWN	GPIOB
+#define PIN_CUTDOWN	GPIO_Pin_5
+
 #define BANK_MOSI	GPIOA
 #define PIN_MOSI	GPIO_Pin_7
 #define	BANK_SCK	GPIOA

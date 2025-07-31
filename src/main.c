@@ -84,7 +84,19 @@ void set_yellow_led(bool enabled)
 
     system_set_yellow_led(enabled);
 }
+
+// For flight set to OFF below LED level and includes desired test in main program loop.
+// This should block accidental ground activation.
+void set_cutdown(bool cut_state)
+{
+    if ((LEDS_DISABLE_ALTITUDE_METERS > 0) && (current_gps_data.altitude_mm / 1000 < LEDS_DISABLE_ALTITUDE_METERS)) {
+        cut_state = false;
+    }
+
+    system_set_cutdown(cut_state);
+}
 #endif
+
 
 int main(void)
 {
