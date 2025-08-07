@@ -74,14 +74,14 @@ void telemetry_collect(telemetry_data *data)
            // Altitude can be independent as desired and set.
            if (data->gps.altitude_mm / 1000 < (CUTDOWN_ALTITUDE - 1000)) {
               system_set_cutdown(!CUT_ENABLED);
-              data->rp_cutdown = 0;
+              data->rp_cutdown = 0x00;
            }
            else {
               if (data->gps.latitude_degrees_1000000 / 10000000.0f < CUTDOWN_LATITUDE && \
                   data->gps.longitude_degrees_1000000 / 10000000.0f > CUTDOWN_LONGITUDE && \
                   data->gps.altitude_mm / 1000 > CUTDOWN_ALTITUDE) {
                   system_set_cutdown(CUT_ENABLED);
-                  data->rp_cutdown = 1;
+                  data->rp_cutdown = 0x01;
               }               
            }    
         #endif          
@@ -112,10 +112,11 @@ void telemetry_collect(telemetry_data *data)
        if (t_look >49 ){
           t_look = 49;
        }
-       data->rp_lu_code = t_look;
+       data->rp_lu_code = (t_look);
        data->rp_xtal_code = c_value[t_look];
+
     
-       si4063_set_crystal_capacitance(data->rp_xtal_code);
+       si4063_set_crystal_capacitance(c_value[t_look]);
     }    
 
 #endif

@@ -76,7 +76,9 @@ size_t horus_packet_v2_create(uint8_t *payload, size_t length, telemetry_data *d
 
     // Unit: mbar * 10
     uint16_t ext_pressure_mbar = (uint16_t) (data->pressure_mbar_100 / 10.0f);
+    // uint16_t ext_pressure_mbar = (uint16_t) (2222);
     memcpy(custom_data_pointer, &ext_pressure_mbar, sizeof(ext_pressure_mbar));
+    custom_data_pointer += sizeof(ext_pressure_mbar);
 
     #ifdef DFM17
     // Unit: Count 

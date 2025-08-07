@@ -28,7 +28,7 @@
  */
 
 // Set the tracker amateur radio call sign here
-#define CALLSIGN "DFM-TEST"
+#define CALLSIGN "DFM17"
 // Disabling LEDs will save power
 // Red LED: Lit during initialization and transmit.
 // Green LED: Blinking fast when there is no GPS fix. Blinking slowly when the GPS has a fix.
@@ -283,13 +283,13 @@
 
 // Which modes to transmit using an externally connected Si5351 chip in the I²C bus
 // The COUNT settings define the number of times that each type of transmission is repeated
-#define RADIO_SI5351_TX_CW true
+#define RADIO_SI5351_TX_CW false
 #define RADIO_SI5351_TX_CW_COUNT 1
 #define RADIO_SI5351_TX_PIP false
 #define RADIO_SI5351_TX_PIP_COUNT 6
 #define RADIO_SI5351_TX_HORUS_V1 false
 #define RADIO_SI5351_TX_HORUS_V1_COUNT 1
-#define RADIO_SI5351_TX_HORUS_V2 true
+#define RADIO_SI5351_TX_HORUS_V2 false
 #define RADIO_SI5351_TX_HORUS_V2_COUNT 4
 #define RADIO_SI5351_TX_JT9 false
 #define RADIO_SI5351_TX_JT9_COUNT 1
@@ -393,7 +393,7 @@
 
 // NOTE: Payload ID 256 (4FSKTEST-V2) is for testing purposes only, and should not be used on an actual flight.
 // Please request a new payload ID in GitHub according to the instructions at: https://github.com/projecthorus/horusdemodlib/wiki#how-do-i-transmit-it
-#define HORUS_V2_PAYLOAD_ID 256
+#define HORUS_V2_PAYLOAD_ID 532
 #define HORUS_V2_BAUD_RATE_SI4032 100
 #define HORUS_V2_BAUD_RATE_SI4063 100
 #define HORUS_V2_BAUD_RATE_SI5351 50
@@ -457,7 +457,7 @@
 // See the README file for more detailed documentation about time sync and its offset setting
 #define CW_TIME_SYNC_SECONDS 60
 // Delay transmission for an N second offset, counting from the scheduled time set with TIME_SYNC_SECONDS.
-#define CW_TIME_SYNC_OFFSET_SECONDS 0
+#define CW_TIME_SYNC_OFFSET_SECONDS 1
 
 /**
  * Pip settings (short beep generated using CW to indicate presence of the transmitter)
