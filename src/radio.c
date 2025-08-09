@@ -504,7 +504,7 @@ const bool wspr_locator_fixed_enabled = WSPR_LOCATOR_FIXED_ENABLED;
 radio_transmit_entry *radio_current_transmit_entry = NULL;
 static uint8_t radio_current_transmit_entry_index = 0;
 static uint8_t radio_transmit_entry_count = 0;
-static uint8_t post_transmit_extender = 1;
+static float post_transmit_extender = 1.0;
 
 static volatile uint32_t radio_post_transmit_delay_counter = 0;
 static volatile uint32_t radio_next_symbol_counter = 0;
@@ -863,10 +863,14 @@ static bool radio_transmit_symbol(radio_transmit_entry *entry)
 }
 
 static void radio_reset_transmit_delay_counter()
-{
-    radio_post_transmit_delay_counter = (RADIO_POST_TRANSMIT_DELAY_MS * SYSTEM_SCHEDULER_TIMER_TICKS_PER_SECOND / 1000) * post_transmit_extender;
+{   
+    radio_post_transmit_delay_counter = (RADIO_POST_TRANSMIT_DELAY_MS * SYSTEM_SCHEDULER_TIMER_TICKS_PER_SECOND / 1000);
 }
 
+static void extend_transmit_delay_counter()
+{   
+    radio_post_transmit_delay_counter = (uint32_t)((RADIO_POST_TRANSMIT_DELAY_MS * SYSTEM_SCHEDULER_TIMER_TICKS_PER_SECOND / 1000) * SLOW_RATE_TRANSMIT_MULTIPLIER * 1.25);
+}
 
 static void radio_next_transmit_entry()
 {
@@ -885,6 +889,9 @@ static void radio_next_transmit_entry()
     }
 
     radio_reset_transmit_delay_counter();
+    if (post_transmit_extender > 1.0){
+	    extend_transmit_delay_counter();
+	}
 }
 
 void radio_handle_timer_tick()
@@ -968,11 +975,14 @@ bool radio_handle_time_sync()
     //---------------------------------------------------------------
 
     if (gps.altitude_mm / 1000 > SLOW_RATE_TRANSMIT_ALTITUDE) {
-        time_sync_millis = time_sync_millis * SLOW_RATE_TRANSMIT_MULTIPLIER;
-        post_transmit_extender = SLOW_RATE_TRANSMIT_MULTIPLIER;
-    } else { 
-          post_transmit_extender = 1;
-    }
+        time_sync_millis = (uint32_t)(time_sync_millis * SLOW_RATE_TRANSMIT_MULTIPLIER);
+	post_transmit_extender = 1.3 * SLOW_RATE_TRANSMIT_MULTIPLIER;
+	}
+    else {
+	post_transmit_extender = 1.0;
+	}
+        
+     
 
     uint32_t time_with_offset_millis = time_millis - time_sync_offset_millis;
     uint32_t time_sync_period_millis = time_with_offset_millis % time_sync_millis;
@@ -1013,6 +1023,10 @@ void radio_handle_main_loop()
         }
 
         radio_reset_transmit_delay_counter();
+        if (post_transmit_extender > 1.0){
+	    extend_transmit_delay_counter();
+	}		
+            
         radio_start_transmit_entry = radio_current_transmit_entry;
     } else if (!radio_shared_state.radio_transmission_active && radio_post_transmit_delay_counter == 0) {
         #if defined(SEMIHOSTING_ENABLE) && defined(LOGGING_ENABLE)
@@ -1032,6 +1046,9 @@ void radio_handle_main_loop()
         #endif
 
         radio_reset_transmit_delay_counter();
+        if (post_transmit_extender > 1.0){
+	    extend_transmit_delay_counter();
+	}
         radio_start_transmit_entry = radio_current_transmit_entry;
     }
 
