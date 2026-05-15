@@ -1,6 +1,6 @@
 # RS41ng - Amateur radio firmware for Vaisala RS41 and Graw DFM-17 radiosondes
 
-## RPratt20 fork includes these changes for DFM-17:
+## RPratt20 fork includes these changes for DFM-17: This is before Horus V3.
 
 * Added frequency stabilization to reduce DFM transmitter drift with lowering temperature including telemetry of settings.
 * Added second power level to allow non-Horus modes to transmit a higher level.
